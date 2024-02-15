@@ -128,6 +128,8 @@
 //      increased buffer size for MQTT to allow send all sensors data if SEND_BY_MODULE is not defined
 //      changed wind.hpp to submit win measures on a complete period (numsampleswind * 5 secs.)
 //
+//  6.8.1 don't change spaces by &nbsp; in handlerBoltwood() if browser is 'curl'
+//
 ///////////////////////////////////////////////////////////////
  
 
@@ -143,7 +145,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>   // v 1.9.12
 
-#define FVERSION  "v6.8"
+#define FVERSION  "v6.8.1"
 #define PNAME "ESP8266 Air Quality"
 
 ///////////////////////////////////////////////////
@@ -608,6 +610,7 @@ void setup() {
   server.on("/data",handleRowData);
   server.on("/setupform", handleSetupForm);
   server.on("/parametersform", handleParametersForm);
+  server.collectHeaders("User-Agent","Content-Type");
 #ifdef  W_BOLTWOOD
   server.on("/boltwood", handleBoltwood);
 #endif

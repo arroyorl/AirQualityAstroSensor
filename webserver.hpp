@@ -106,8 +106,18 @@ void handleRowData() {
 void handleBoltwood(){
 
   DebugLn("handleBoltwood");
+
+  getSensorData();
+
   String data = boltwoodData();
-  data.replace(" ","&nbsp;");
+
+  String UserAgent = server.header("User-Agent");
+  DebugLn("User Agent:" + UserAgent);
+  if (UserAgent.indexOf("curl") == -1) {
+    //browswer is not curl, replace spaces by &nbsp;
+    data.replace(" ","&nbsp;");
+  }
+
   server.send(200, "text/html", data);
 
 }
