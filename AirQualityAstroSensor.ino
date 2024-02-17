@@ -130,6 +130,10 @@
 //
 //  6.8.1 don't change spaces by &nbsp; in handlerBoltwood() if browser is 'curl'
 //
+//  6.9 replaced sqm-tsl2591 library by estandard Adafruit_TSL2591 and calculate SQM in sketch
+//      sqm-tsl2591 library enter in loop when sensor is saturated
+//
+//
 ///////////////////////////////////////////////////////////////
  
 
@@ -145,7 +149,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>   // v 1.9.12
 
-#define FVERSION  "v6.8.1"
+#define FVERSION  "v6.9"
 #define PNAME "ESP8266 Air Quality"
 
 ///////////////////////////////////////////////////
