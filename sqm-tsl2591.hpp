@@ -6,6 +6,8 @@
 
           V2.0 replaced SQM_TSL2591 library by Adafruit_TSL2591
           and made calculations in this module
+
+          v2.1 solved issue when sensor is saturated
 *************************************************/
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
@@ -233,8 +235,10 @@ void SQMtakeReading(){
 
   tsl2591IntegrationTime_t intTime = sqm.getTiming();
   tsl2591Gain_t gain = sqm.getGain();
+  DebugLn("SQM: gain: 0x" + String(gain, HEX) + ", integration: " + String(intTime) + ", full: " + String(full) + ", vis: " + String(vis));
 
-  if ((float)vis < 128.) {
+
+  if (full < 128) {
     // intensity is low, increase gain and/or integration time
     if (gain != TSL2591_GAIN_MAX) {
       // increase gain
@@ -257,7 +261,7 @@ void SQMtakeReading(){
     if (intTime != TSL2591_INTEGRATIONTIME_100MS) {
       // decrease integration time
         DebugLn("SQM: Bumping integration down");
-        SQMbumpTime(-11);
+        SQMbumpTime(-1);
         SQMtakeReading();
         return;
     } else {
@@ -293,7 +297,7 @@ void SQMtakeReading(){
       niter++;
       fullCumulative += full;
       irCumulative += ir;
-      visCumulative = fullCumulative - irCumulative;
+      visCumulative += full - ir;
     }
     if (niter >= SQM_NUM_SAMPLES) {
       break;
@@ -305,7 +309,7 @@ void SQMtakeReading(){
   float integrationValue = SQMgetIntegrationValue(intTime);
 
   float factor = (gainValue * integrationValue / 100.F); 
-  // DebugLn("SQM: niter: " + String(niter) + ", gain:" + String(gainValue) + ", integration time: " + String(integrationValue) + ", factor: " + String(factor));
+  DebugLn("SQM: niter: " + String(niter) + ", gain:" + String(gainValue) + ", integration time: " + String(integrationValue) + ", factor: " + String(factor));
   sqmFull = (float)fullCumulative / (float)niter; 
   sqmIr = (float)irCumulative / (float)niter;
   float VIS = (float)visCumulative / (factor * niter);
