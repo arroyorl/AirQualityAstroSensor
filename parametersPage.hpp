@@ -46,7 +46,7 @@ const char PARAM_UV_page[] PROGMEM = R"=====(
 <tr><td>UV adjust:</td><td><input type=text name="uvadjust" value="@@UVADJUST@@"> </td><td></td></tr>
 )=====";
 
-const char PARAM_SQM_page[] PROGMEM = R"=====(
+const char PARAM_GY906_page[] PROGMEM = R"=====(
 <table style="width:700px">
 <tr><td colspan=4 class=heading>Sky temperature parameters</td></tr>
 <tr><td>Clear sky temp.:</td>
@@ -123,11 +123,11 @@ void handleParameters() {
 #ifdef  W_WIND
   s += FPSTR(PARAM_WIND_page);
 #endif
-#ifdef  W_ML1145
+#if defined(W_ML1145) || defined(W_VEML6075)
   s += FPSTR(PARAM_UV_page);
 #endif
-#ifdef  W_SQM
-  s += FPSTR(PARAM_SQM_page);
+#ifdef  W_GY906
+  s += FPSTR(PARAM_GY906_page);
 #endif
 
   s += FPSTR(PARAM_SAFE_page);
@@ -155,7 +155,7 @@ void handleParameters() {
 #define COLRED    "#FF4500"   // orange red
 #define COLGREEN  "#7FFF00"   //Chartreuse (ligth green)
 
-#ifdef  W_SQM
+#ifdef  W_GY906
   s.replace("@@CLOUDYTEMP@@",String(settings.data.cloudytemp,1));
   s.replace("@@SKYTEMP@@",String(skyTemp,1));
   if (skyTemp < settings.data.cloudytemp)

@@ -8,6 +8,11 @@
           and made calculations in this module
 
           v2.1 solved issue when sensor is saturated
+
+          v2.2 used mpsas calculation formula from 
+          http://www.unihedron.com/projects/darksky/magconv.php
+          if full == ir, consider as full and decrease sensibility
+          
 *************************************************/
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
@@ -256,7 +261,7 @@ void SQMtakeReading(){
         return;
       } 
     }
-  } else if (full == 0xFFFF || ir == 0xFFFF) {
+  } else if (full == 0xFFFF || ir == 0xFFFF || full == ir) {
     // saturated, decrease gain and/or intensity
     if (intTime != TSL2591_INTEGRATIONTIME_100MS) {
       // decrease integration time
@@ -315,7 +320,8 @@ void SQMtakeReading(){
   float VIS = (float)visCumulative / (factor * niter);
   sqmVis = (float)visCumulative / (float)niter;
   sqmLux = sqm.calculateLux(sqmFull, sqmIr);
-  sqmMpsas = 12.6 - 1.086 * log(VIS);
+//   sqmMpsas = 12.6 - 1.086 * log(VIS);  // original formula from https://github.com/gshau/SQM_TSL2591/tree/master 
+  sqmMpsas = log10(sqmLux/108000.F) / (-0.4); // updated formula from http://www.unihedron.com/projects/darksky/magconv.php
   sqmDmpsas = 1.086 / sqrt(visCumulative);
 
 }

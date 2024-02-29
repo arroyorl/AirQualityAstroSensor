@@ -133,6 +133,12 @@
 //  6.9 replaced sqm-tsl2591 library by estandard Adafruit_TSL2591 and calculate SQM in sketch
 //      sqm-tsl2591 library enter in loop when sensor is saturated
 //
+//  6.9.1 replaced formula for SQM mpsas calculation
+//          from http://www.unihedron.com/projects/darksky/magconv.php
+//        added settings.data.uvadjust as coefficient for UVIndex calculation in VELM6075
+//
+//  6.10 changed parameters and modes in VEML6075 module
+//       changed #ifdef W_SQM by W_GY906 in parameters (the section corresponds to GY906)       
 //
 ///////////////////////////////////////////////////////////////
  
@@ -149,7 +155,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>   // v 1.9.12
 
-#define FVERSION  "v6.9"
+#define FVERSION  "v6.10"
 #define PNAME "ESP8266 Air Quality"
 
 ///////////////////////////////////////////////////
