@@ -80,6 +80,8 @@ class Settings {
 
     float   sqmthreshold;                      // SQM threshold safe
     float   luxthreshold;                      // luminosity safe threshold
+
+    bool    rainabove;                         // is rain above or below threshold?
 } data;
     
     Settings() {};
@@ -117,6 +119,7 @@ class Settings {
       data.humiditythreshold=80.0;
 
       data.rainthreshold=600;
+      data.rainabove=false;   // false = if rainA is below threshold it is raining
 
       data.numsampleswind=12;
       data.windthreshold=30.0;

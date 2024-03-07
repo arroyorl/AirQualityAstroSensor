@@ -138,7 +138,11 @@
 //        added settings.data.uvadjust as coefficient for UVIndex calculation in VELM6075
 //
 //  6.10 changed parameters and modes in VEML6075 module
-//       changed #ifdef W_SQM by W_GY906 in parameters (the section corresponds to GY906)       
+//       changed #ifdef W_SQM by W_GY906 in parameters (the section corresponds to GY906)      
+//
+//  6.11 defined rainabove in settings to control if rainD is true when A0 reading (rainA) is
+//        above or below threshold.
+//       this is needed for graphite rain sensors 
 //
 ///////////////////////////////////////////////////////////////
  
@@ -155,7 +159,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>   // v 1.9.12
 
-#define FVERSION  "v6.10"
+#define FVERSION  "v6.11"
 #define PNAME "ESP8266 Air Quality"
 
 ///////////////////////////////////////////////////
