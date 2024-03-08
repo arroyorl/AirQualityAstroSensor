@@ -78,8 +78,8 @@ const char PARAM_SAFE_page[] PROGMEM = R"=====(
 <tr><td>Rain threshold:</td>
   <td>
   	<select id="rainabove" name="rainabove">
-      <option value=">" @@SELABOVE@@>&gt;</option>
-      <option value="<" @@SELBELOW@@>&lt;</option>
+      <option value=">" @@SELBELOW@@>&gt;</option>
+      <option value="<" @@SELABOVE@@>&lt;</option>
   	</select>
     &nbsp;<input type=text size=6 name="rainthreshold" value="@@RAINTHRESHOLD@@"> </td>
   <td><small>&nbsp;<label align="right" style="width:70px; display:inline-block; background:@@COLRAIN@@"> @@RAINA@@ </label></small></td></tr>
@@ -335,7 +335,7 @@ String aux;
     settings.data.rainthreshold= constrain(aux.toInt(),0,1023);
   }
   aux = server.arg("rainabove");
-  if (aux == ">") { 
+  if (aux == "<") { 
     settings.data.rainabove = true;
   }
   else {
