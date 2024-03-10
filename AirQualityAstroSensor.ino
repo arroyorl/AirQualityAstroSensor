@@ -144,6 +144,8 @@
 //        above or below threshold.
 //       this is needed for graphite rain sensors 
 //
+//  6.11.1 included code in safe.hpp to take in account data.rainabove variable
+//
 ///////////////////////////////////////////////////////////////
  
 
@@ -159,7 +161,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>   // v 1.9.12
 
-#define FVERSION  "v6.11"
+#define FVERSION  "v6.11.1"
 #define PNAME "ESP8266 Air Quality"
 
 ///////////////////////////////////////////////////
