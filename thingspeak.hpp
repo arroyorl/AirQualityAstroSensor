@@ -14,7 +14,7 @@ void ts_send(unsigned long ts_channel, char* ts_key){
 int result;
 
   if ( (ts_channel != 0) && (strlen(ts_key) > 0)) {
-    DebugLn("ThingSpeak, loading fields...");
+    InfoLn("ThingSpeak, loading fields...");
 #ifdef W_SDS011
     ThingSpeak.setField(1, pm10f);
     ThingSpeak.setField(2, pm25f);

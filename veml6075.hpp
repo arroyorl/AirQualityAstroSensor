@@ -32,32 +32,32 @@ bool veml6075setup(){
   // Set the integration constant
   uv.setIntegrationTime(VEML6075_50MS);
   // Get the integration constant and print it!
-  Serial.print("Integration time set to ");
+  Info("Integration time set to ");
   switch (uv.getIntegrationTime()) {
-    case VEML6075_50MS: Debug("50"); break;
-    case VEML6075_100MS: Debug("100"); break;
-    case VEML6075_200MS: Debug("200"); break;
-    case VEML6075_400MS: Debug("400"); break;
-    case VEML6075_800MS: Debug("800"); break;
+    case VEML6075_50MS: Info("50"); break;
+    case VEML6075_100MS: Info("100"); break;
+    case VEML6075_200MS: Info("200"); break;
+    case VEML6075_400MS: Info("400"); break;
+    case VEML6075_800MS: Info("800"); break;
   }
-  DebugLn(" ms");
+  InfoLn(" ms");
 
   // Set the high dynamic mode
   uv.setHighDynamic(false);
   // Get the mode
   if (uv.getHighDynamic()) {
-    DebugLn("High dynamic reading mode");
+    InfoLn("High dynamic reading mode");
   } else {
-    DebugLn("Normal dynamic reading mode");
+    InfoLn("Normal dynamic reading mode");
   }
 
   // Set the mode
   uv.setForcedMode(false);
   // Get the mode
   if (uv.getForcedMode()) {
-    DebugLn("Forced reading mode");
+    InfoLn("Forced reading mode");
   } else {
-    DebugLn("Continuous reading mode");
+    InfoLn("Continuous reading mode");
   }
 
 /*********************************************************************
@@ -70,6 +70,8 @@ No teflon (open air)          2.22 1.33 2.95 1.74 0.001461 0.002591
 0.25 mm teflon 10 mm window   2.22 1.33 2.95 1.74 0.002919 0.009389
 0.4 mm teflon 10 mm window    2.22 1.17 2.95 1.58 0.004770 0.006135
 0.7 mm teflon 10 mm window    2.22 1.17 2.95 1.58 0.007923 0.008334
+personal / empirical  (1)     2.22 1.14 2.95 1.43 0.000730 0.001296
+personal / empirical  (2)     2.22 0.85 2.95 1.01 0.002045 0.003627
 
 see: https://cdn.sparkfun.com/assets/3/9/d/4/1/designingveml6075.pdf
 ********************************************************************/
@@ -84,9 +86,9 @@ see: https://cdn.sparkfun.com/assets/3/9/d/4/1/designingveml6075.pdf
 //
 // all of above is not very scientifical, but gives a reanonable good UVI value
 
-  uv.setCoefficients(2.22, 1.14,  // UVA_A and UVA_B coefficients (0.8586)
-                     2.95, 1.43,  // UVB_C and UVB_D coefficients (0.8226)
-                     0.000730, 0.001296); // UVA and UVB responses (0.5)
+  uv.setCoefficients(2.22, 0.85,  // UVA_A and UVA_B coefficients (0.6424)
+                     2.95, 1.01,  // UVB_C and UVB_D coefficients (0.5782)
+                     0.002045, 0.003627); // UVA and UVB responses (1.4)
 
     veml6075Active = true;
     return true;

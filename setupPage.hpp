@@ -87,7 +87,7 @@ void handleSetup() {
 }
 
 void handleSetupForm() {
-  DebugLn("handleSetupForm");
+  InfoLn("handleSetupForm");
 
   DebugLn("WiFi mode "+ String(WiFi.status()));
   String update_wifi = server.arg("update_wifi");

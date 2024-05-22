@@ -45,7 +45,7 @@ float computeDewPoint(float celsius, float humidity)
 void BME280setup(){
   // BME280, SDA=4 (D2), SCL=5 (D1)
   bme280active = bme.begin(0x76);          
-  DebugLn("-> BME begin: " + String(bme280active));
+  InfoLn("-> BME begin: " + String(bme280active));
 }
 
 /**************************************************************************/
@@ -80,7 +80,7 @@ float runpress=0;
     ////////////////////////////////////////////////////////////////////////////////
 
     if (isnan(humidity) || isnan(temperature) || isnan(pressure)) {
-        DebugLn("Failed to read from sensor!");
+        ErrorLn("Failed to read from sensor!");
     }
 
     
@@ -91,7 +91,7 @@ float runpress=0;
     DebugLn("SeaLevelPres: "+String(sealevelpressure));
   }
   else {
-    DebugLn("************ BME280 not active *************");
+    WarningLn("************ BME280 not active *************");
   }
 }
 

@@ -54,7 +54,7 @@ float getTSL2561lux()
 
   tsl.getSensor(&sensor);
 
-  DebugLn ("Reading TSL2561 data");
+  InfoLn ("Reading TSL2561 data");
   DebugLn ("Max Value:    " + String(sensor.max_value) + " lux");
   DebugLn ("Min Value:    " + String(sensor.min_value) + " lux");
   DebugLn ("Resolution:   " + String(sensor.resolution) + " lux");  

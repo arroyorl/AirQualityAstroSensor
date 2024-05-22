@@ -14,6 +14,8 @@ float   objTemp;
 float   skyTemp;
 float   cloudI;
 
+bool    gy906Active=false;
+
 bool    clouds = true;
 
 template <typename T> int sgn(T val) {
@@ -26,10 +28,11 @@ void gy906setup(){
 
   if (mlx.begin()) {
     DebugLn("GY-906 initialized");
+    gy906Active=true;
   }
   else {  
     DebugLn("Error connecting to GY-906 sensor. Check wiring.");
-    ESP.restart();
+    gy906Active=false;
   }
 
   emissivity = mlx.readEmissivity();
@@ -94,6 +97,8 @@ float cloudIndex(float skyT) {
 void get_gy906data(){
 
   DebugLn("Get GY-906 data");
+
+  if(!gy906Active) return;    // return if GY906 has not been found
 
   emissivity = mlx.readEmissivity();
   ambientTemp = mlx.readAmbientTempC();

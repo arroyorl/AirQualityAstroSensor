@@ -66,7 +66,6 @@ void SQMdisplaySensorDetails(void)
 {
   sensor_t sensor;
   sqm.getSensor(&sensor);
-  Serial.println(F("------------------------------------"));
   DebugLn("Sensor:       " + String(sensor.name));
   DebugLn("Driver Ver:   " + String(sensor.version));
   DebugLn("Unique ID:    " + String(sensor.sensor_id));
@@ -133,7 +132,7 @@ void SQMbumpGain(int bumpDirection) {
     break;
   }
   sqm.setGain(gain);
-  DebugLn("SQM: new gain: " + String(SQMgetGainValue(gain)) + "x");
+  InfoLn("SQM: new gain: " + String(SQMgetGainValue(gain)) + "x");
 }
 
 
@@ -188,7 +187,7 @@ void SQMbumpTime(int bumpDirection) {
     break;
   }
   sqm.setTiming(intTime);
-  DebugLn("SQM: new integration time: " + String(SQMgetIntegrationValue(intTime)) + " ms.");
+  InfoLn("SQM: new integration time: " + String(SQMgetIntegrationValue(intTime)) + " ms.");
 
 }
 
@@ -197,7 +196,7 @@ bool SQMsetup()
   if(!sqm.begin())
   {
     // TSL2591 not detected
-    DebugLn("No TSL2591 detected ... Check wiring or I2C ADDR !");
+    ErrorLn("No TSL2591 detected ... Check wiring or I2C ADDR !");
     sqmActive = false;
     return false;
   }
@@ -211,7 +210,7 @@ bool SQMsetup()
   delay(500);
 
   /* Update these values depending on what you've set above! */  
-  DebugLn ("***** Initialized SQM-TSL2591 *****");
+  InfoLn ("***** Initialized SQM-TSL2591 *****");
 
   sqmActive = true;
   return true;
@@ -226,10 +225,10 @@ void SQMtakeReading(){
   ir = lum >> 16;
   full = lum & 0xFFFF;
   if ((float)full < (float)ir) {
-    DebugLn("SQM: full < ir!  Rechecking...");
+    InfoLn("SQM: full < ir!  Rechecking...");
     numTries++;
     if(numTries > 50) {
-      DebugLn("SQM: too many times full < ir!");
+      InfoLn("SQM: too many times full < ir!");
       return; // do nothing
     }
     delay(50);
@@ -247,7 +246,7 @@ void SQMtakeReading(){
     // intensity is low, increase gain and/or integration time
     if (gain != TSL2591_GAIN_MAX) {
       // increase gain
-        DebugLn("SQM: Bumping gain up");
+        InfoLn("SQM: Bumping gain up");
         SQMbumpGain(1);
         SQMtakeReading();
         return;
@@ -255,7 +254,7 @@ void SQMtakeReading(){
     else {
       // gain is maximum, increase integration time
       if (intTime != TSL2591_INTEGRATIONTIME_600MS) {
-        DebugLn("SQM: Bumping integration up");
+        InfoLn("SQM: Bumping integration up");
         SQMbumpTime(1);
         SQMtakeReading();
         return;
@@ -265,14 +264,14 @@ void SQMtakeReading(){
     // saturated, decrease gain and/or intensity
     if (intTime != TSL2591_INTEGRATIONTIME_100MS) {
       // decrease integration time
-        DebugLn("SQM: Bumping integration down");
+        InfoLn("SQM: Bumping integration down");
         SQMbumpTime(-1);
         SQMtakeReading();
         return;
     } else {
       // time at minimum, decrease gain
       if (gain != TSL2591_GAIN_LOW ) {
-        DebugLn("SQM: Bumping gain down");
+        InfoLn("SQM: Bumping gain down");
         SQMbumpGain(-1);
         SQMtakeReading();
         return;

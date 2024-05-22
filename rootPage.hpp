@@ -45,7 +45,7 @@ Usage:<br>
 )=====";
 
 void handleRoot() {
-  DebugLn("handleRoot");
+  InfoLn("handleRoot");
 
  String s = FPSTR(ROOT_page);
 

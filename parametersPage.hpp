@@ -120,7 +120,7 @@ const char PARAM_LAST_page[] PROGMEM = R"=====(
 )=====";
 
 void handleParameters() {
-  DebugLn("handleParameters");
+  InfoLn("handleParameters");
 
  String s = FPSTR(PARAM_FIRST_page);
 #ifdef  W_BME280
@@ -259,7 +259,7 @@ void handleParameters() {
 void handleParametersForm() {
 String aux;
 
-  DebugLn("handleParametersForm");
+  InfoLn("handleParametersForm");
 
   String pint = server.arg("poolint");
   if (pint.length()) {

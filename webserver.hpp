@@ -8,7 +8,7 @@ void sendHTTP (String httpPost){
   http.begin(client, httpPost);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   int httpCode = http.POST("");
-  DebugLn(httpCode);    
+  DebugLn("HTTPPost return code: " + String(httpCode));    
   http.end();
 }
 
@@ -21,7 +21,7 @@ void sendHTTPGet (String httpGet){
   DebugLn(httpGet);
   http.begin(client, httpGet);
   int httpCode = http.GET();
-  DebugLn(httpCode);    
+  DebugLn("HTTPGet return code: " + String(httpCode));    
   http.end();
 }
 
@@ -37,14 +37,24 @@ void sendHTTPsGet (String httpGet){
   client->setInsecure();
   // send data
   DebugLn("HTTPsGet: " + httpGet);
-  https.begin(*client, httpGet);
-  // http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  int httpCode = https.GET();
-  String payload = https.getString();
+  if (https.begin(*client, httpGet)) {
+    // https.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    int httpCode = https.GET();
+    String payload = https.getString();
 
-  DebugLn("HTTPsGet return code: " + String(httpCode));    // this return 200 when success
-  DebugLn(payload);     // this will get the response
-  https.end();
+    if (httpCode > 0) {
+      // Sucess
+      DebugLn("HTTPsGet return code: " + String(httpCode));    // this return 200 when success
+    }
+    else {
+      WarningLn("HTTPsGet return code: " + String(httpCode) + "[" + https.errorToString(httpCode).c_str() + "]");
+    }
+    DebugLn(payload);     // this will get the response
+    https.end();
+  }
+  else {
+    DebugLn("HTTPsGet unable to connect");
+  }
 
 }
 
@@ -52,7 +62,7 @@ void sendHTTPsGet (String httpGet){
 //  web server page returning raw data (json)
 //--------------------------------------------
 void handleRowData() {
-  DebugLn("handleRowData");
+  InfoLn("handleRowData");
 
   time(&now);                       // read the current time
   localtime_r(&now, &tm);           // update the structure tm with the current time
@@ -105,7 +115,7 @@ void handleRowData() {
 //-----------------------------------------------------
 void handleBoltwood(){
 
-  DebugLn("handleBoltwood");
+  InfoLn("handleBoltwood");
 
   getSensorData();
 

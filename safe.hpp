@@ -31,6 +31,7 @@ bool isSafe(){
     if (rainA < settings.data.rainthreshold)
       res = false;
   }
+  DebugLn("rainabove: " + String(settings.data.rainabove) + ", threshold: " + String(settings.data.rainthreshold));
 #endif
 #ifdef  W_GY906
   if (cloudI > settings.data.cloudthreshold)

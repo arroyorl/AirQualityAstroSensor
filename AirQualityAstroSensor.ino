@@ -146,7 +146,16 @@
 //
 //  6.11.1 included code in safe.hpp to take in account data.rainabove variable
 //
-///////////////////////////////////////////////////////////////
+//  6.12  Removed reset action when GY906 is not found and changed by a variable (gy906Active) 
+//          which controls if get_gy906data() gets the data or returns inmediatelly
+//
+//  6.12.1  adjusted parameter for UV index
+//
+//  6.13  replaced Rdebug.h by rdebug.hpp (uses remote debug library: https://github.com/karol-brejna-i/RemoteDebug)
+//        sending data to WU with http instead of https (https doesn't work well after include rdebug.hpp)
+//        changed some Debug/DebugLn by Info/InfoLn, Warning/WarningLn and Error/ErrorLn for better debug
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
 
 #include <ESP8266WiFi.h>
@@ -161,7 +170,7 @@
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>   // v 1.9.12
 
-#define FVERSION  "v6.11.1"
+#define FVERSION  "v6.13"
 #define PNAME "ESP8266 Air Quality"
 
 ///////////////////////////////////////////////////
@@ -189,7 +198,7 @@
                         // if not defined will send a message integrating all data
                         // except for rain and wind for which separate messages are sent
 
-#include "Rdebug.h"
+#include "rdebug.hpp"
 #include "settings.h"
 
 #define GPIO0 0
@@ -296,21 +305,21 @@ void blinkLed(unsigned long time){
 // setup WiFi configuration
 /////////////////////////////////////////
 void firstSetup(){
-  DebugLn("First Setup ->");
-  DebugLn(String(settings.data.magic));
-  DebugLn("Setting up AP");
+  InfoLn("First Setup ->");
+  InfoLn(String(settings.data.magic));
+  InfoLn("Setting up AP");
   WiFi.mode(WIFI_AP);             //Only Access point
   WiFi.softAP(ap_ssid, NULL, 8);  //Start HOTspot removing password will disable security
   delay(50);
   server.on("/", handleSetup);
   server.on("/setupform", handleSetupForm);
-  DebugLn("Server Begin");
+  InfoLn("Server Begin");
   server.begin(); 
   delay(100);
   do {
     server.handleClient(); 
     blinkLed(200);
-    Debug(".");
+    Info(".");
   }
   while (!ap_setup_done);
     
@@ -321,7 +330,7 @@ void firstSetup(){
   server.stop();
   WiFi.disconnect();
   settings.Save();
-  DebugLn("First Setup Done");
+  InfoLn("First Setup Done");
 }
 
 
@@ -336,8 +345,8 @@ int setupSTA()
     WiFi.disconnect();
     WiFi.hostname("ESP-" + String(settings.data.name)) ;
     WiFi.mode(WIFI_STA);
-    DebugLn("Connecting to "+String(settings.data.ssid));
-    DebugLn("Connecting to "+String(settings.data.psk));
+    InfoLn("Connecting to "+String(settings.data.ssid));
+    InfoLn("Connecting to "+String(settings.data.psk));
     
     if (String(settings.data.psk).length()) {
       WiFi.begin(String(settings.data.ssid), String(settings.data.psk));
@@ -362,12 +371,12 @@ int setupSTA()
         }
       }
     }
-    DebugLn(" Connected");
+    InfoLn(" Connected");
 
     // Print the IP address
     ipaddress = WiFi.localIP().toString();
-    DebugLn(ipaddress); 
-    DebugLn(WiFi.hostname().c_str());
+    InfoLn(ipaddress); 
+    InfoLn(WiFi.hostname().c_str());
     break; 
     }
     return 1;
@@ -451,7 +460,7 @@ String prepareJsonData() {
 // send sensors data
 /////////////////////////////////////////
 void sendData() {
-  DebugLn("sendData");
+  InfoLn("sendData");
 
   // get Temperature, humidity and Pressure
   getSensorData();
@@ -459,7 +468,7 @@ void sendData() {
 
   if ( isnan(temperature) ) {
     // temperature value is nan, reset device
-    DebugLn("Failed temp reading [nan], reseting device");
+    WarningLn("Failed temp reading [nan], reseting device");
     delay(2000);
     ESP.restart();
   }
@@ -509,11 +518,11 @@ void sendData() {
 // module setup
 /////////////////////////////////////////
 void setup() {
-  DebugStart();
-  DebugLn("Start ->");
+  DebugSerialStart();
+  InfoLn("Start ->");
 
   myResetInfo = ESP.getResetInfoPtr();
-  DebugLn("myResetInfo->reason "+String(myResetInfo->reason)); // reason is uint32
+  InfoLn("myResetInfo->reason "+String(myResetInfo->reason)); // reason is uint32
                                                                  // 0 = power down
                                                                  // 6 = reset button
                                                                  // 5 = restart from deepsleep
@@ -543,7 +552,7 @@ void setup() {
   if (String(settings.data.magic) != MAGIC||!digitalRead(SETUP_PIN)){
     digitalWrite(GREEN_LED, LEDOFF);
     digitalWrite(RED_LED, LEDON);
-    DebugLn("First Setup ->");
+    InfoLn("First Setup ->");
     firstSetup();
   }
   else {
@@ -595,10 +604,13 @@ void setup() {
 
   // *********** setup STA mode and connect to WiFi ************
   if (setupSTA() == 0) { // SetupSTA mode
-    DebugLn("Wifi no connected, wait 60 sec. and restart");
+    WarningLn("Wifi no connected, wait 60 sec. and restart");
     delay(60*1000);
     ESP.restart();
   }
+
+  // ********** initialize remote Debug *******************
+  DebugRemoteStart();
 
   // ********** initialize OTA *******************
   ArduinoOTA.begin();
@@ -641,8 +653,8 @@ void setup() {
 
   // read current time'
   time(&now);                       // read the current time
-  Debug("-> Time sync to ");
-  DebugLn(ctime(&now));
+  Info("-> Time sync to ");
+  InfoLn(ctime(&now));
 
 #ifdef W_SDS011
   //send SDS011 first data if available
@@ -657,7 +669,10 @@ void setup() {
   // send data (first interval)
   sendData();
 
-  DebugLn("-> End Setup");
+  InfoLn("-> End Setup");
+
+  // RemoteDebug handle
+  HandleDebug();
 }
 
 /////////////////////////////////////////
@@ -673,6 +688,9 @@ void loop() {
 
   // handle MQTT
   handleMQTT();
+
+  // RemoteDebug handle
+  HandleDebug();
 
   // normal loop
 

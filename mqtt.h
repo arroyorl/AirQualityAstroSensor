@@ -64,7 +64,7 @@ bool mqtt_reconnect() {
 int res;
 
   if (!client.connected() ) {
-    DebugLn("Attempting MQTT connection...");
+    InfoLn("Attempting MQTT connection...");
     // Create a random client ID
     String clientId = String(settings.data.name) + String(random(0xffff), HEX);
 
@@ -76,16 +76,16 @@ int res;
       res = client.connect(clientId.c_str());
     }
     if (res) {
-      DebugLn("MQTT connected");
+      InfoLn("MQTT connected");
       // once connected ....resubscribe
       base_topic = String(settings.data.mqtttopic);
       base_topic.replace("%modname%",String(settings.data.name));
-      DebugLn("base topic: " + base_topic);
+      InfoLn("base topic: " + base_topic);
       client.subscribe((base_topic + "/setup/#").c_str());
-      DebugLn("subscribe: " + base_topic + "/setup/#");
+      InfoLn("subscribe: " + base_topic + "/setup/#");
     } else {
-      Debug ("MQTT reconnection failed, rc=");
-      DebugLn (client.state());
+      Warning ("MQTT reconnection failed, rc=");
+      WarningLn (client.state());
     }
   }
   else // already connected

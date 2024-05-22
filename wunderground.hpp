@@ -1,9 +1,10 @@
 /**
-/ function for sendi data to WeatherUnderground
+/ function for send data to WeatherUnderground
 **/
 
 // function prototipes
 void sendHTTPsGet (String httpGet);
+void sendHTTPGet (String httpGet);
 
 void sendDataWunderground(){
 float tempf;
@@ -12,8 +13,8 @@ float baromin;
 
   if(strlen(settings.data.stationID) > 0 && strlen(settings.data.stationKey) > 0 ){
     // Send data to Wunderground
-    DebugLn("--- Sending data to Wunderground ---");
-    String  weatherData =  "https://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?";
+    InfoLn("--- Sending data to Wunderground ---");
+    String  weatherData =  "http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?";
     weatherData += "ID=" + String(settings.data.stationID);
     weatherData += "&PASSWORD=" + String(settings.data.stationKey);
     weatherData += "&dateutc=now";
@@ -33,7 +34,7 @@ float baromin;
   #endif
   
     // send to Wunderground
-    sendHTTPsGet(weatherData);
+    sendHTTPGet(weatherData);
   }
                 
 }
